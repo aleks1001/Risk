@@ -95,12 +95,15 @@ class GeneralLiability(BaseLOB):
 
         self.process_score(prod)
         account.process_score(prod * -1)
+        self.print_results(scores, prod, list(map(lambda x: x * -1, scores)), prod * -1, weights)
 
-        print('Taking sum of products from: {} and {}, '
-              'with result: {} and sum of weights: {}\n'
-              .format(scores, weights,
-                      format(prod,
+    def print_results(self, s1, p1, s2, p2, weights):
+        print('{} vs. {}, '
+              'with result: {} vs. {}, weights: {} with sum: {}\n'
+              .format(s1, s2,
+                      format(p1,
                              '.2f'),
-                      format(
-                          self.weight_sum,
-                          '.2f')))
+                      format(p2,
+                             '.2f'),
+                      weights,
+                      format(self.weight_sum, '.2f')))
