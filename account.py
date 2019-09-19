@@ -35,7 +35,7 @@ class Account:
                                  account['p_construction_grade_score'],
                                  is_def(account['p_construction_grade_point']),
                                  account['p_poor_construction_score'],
-                                 is_def(account['p_poor_construction_score']),
+                                 is_def(account['p_poor_construction_point']),
                                  account['p_ppc_factor_score'],
                                  is_def(account['p_ppc_factor_point']),
                                  account['p_poor_ppc_score'],
@@ -62,3 +62,4 @@ class Account:
 
     def play_against_other_account(self, account):
         self.gl.play_business_line(account.gl)
+        self.property.play_business_line(account.property)

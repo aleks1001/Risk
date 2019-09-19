@@ -79,7 +79,7 @@ class Risk:
 
     def compare(self):
         for a, b in itertools.combinations(self.list, 2):
-            print('Playing record {} with record {}'.format(a.id, b.id))
+            print('\nPlaying record {} with record {}'.format(a.id, b.id))
             a.play_against_other_account(b)
 
 
@@ -112,11 +112,11 @@ def main(argv):
             for row in r:
                 # print(row)
                 acc = Account(row)
-                # r = Risk(acc)
+                r = Risk(acc)
         except csv.Error as e:
             sys.exit('file {}, line {}: {}'.format('risk.csv', r.line_num, e))
-    # r.compare()
-    # r.print_all()
+    r.compare()
+    r.print_all()
 
 
 if __name__ == '__main__':

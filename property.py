@@ -169,7 +169,7 @@ class Property(BaseLOB):
         self.average_age = AverageAge(average_age_score, average_age_point)
         self.hurricane_premium = HurricanePremium(hurricane_premium_score, hurricane_premium_point)
         self.hurricane_dispersion = HurricaneDescription(hurricane_dispersion_score, hurricane_dispersion_point)
-        self.bg2_symbol = BG2Symbol(bg2_symbol_score, bg2_symbol_point),
+        self.bg2_symbol = BG2Symbol(bg2_symbol_score, bg2_symbol_point)
         self.flood_premium = FloodPremium(flood_premium_score, flood_premium_point)
         self.flood_dispersion = FloodDescription(flood_dispersion_score, flood_dispersion_point)
         self.bad_flood_terr = BadFloodTerr(bad_flood_terr_score, bad_flood_terr_point)
@@ -192,9 +192,7 @@ class Property(BaseLOB):
                self.bg2_symbol.weight + \
                self.flood_premium.weight + \
                self.flood_dispersion.weight + \
-               self.bad_flood_terr.weight + \
-               self.average_crime.weight + \
-               self.poor_crime_terr.weight
+               self.bad_flood_terr.weight + self.average_crime.weight + self.poor_crime_terr.weight
 
     def play_business_line(self, account):
         a = self.tiv_size.play_field(account.tiv_size.point)
@@ -221,7 +219,7 @@ class Property(BaseLOB):
 
     def print_results(self, s1, p1, s2, p2, weights):
         print('{} vs. {}, '
-              'with result: {} vs. {}, weights: {} with sum: {}\n'
+              'with result: {} vs. {}, weights: {} with sum: {}'
               .format(s1, s2,
                       format(p1,
                              '.2f'),

@@ -99,7 +99,7 @@ class GeneralLiability(BaseLOB):
 
     def print_results(self, s1, p1, s2, p2, weights):
         print('{} vs. {}, '
-              'with result: {} vs. {}, weights: {} with sum: {}\n'
+              'with result: {} vs. {}, weights: {} with sum: {}'
               .format(s1, s2,
                       format(p1,
                              '.2f'),
