@@ -74,8 +74,9 @@ class Risk:
 
     def print_all(self):
         for l in self.list:
-            print('Record: {} has {} wins and {} loses with total score {}'.format(l.id, l.gl.wins, l.gl.losses,
-                                                                                   l.gl.score))
+            print('Record: ', l.id)
+            print('\tGL:\t\t{:>2d} wins, {:>2d} loses, {:>5.2f} points'.format(l.gl.wins, l.gl.losses, l.gl.score))
+            print('\tPROP:\t{:>2d} wins, {:>2d} loses, {:>5.2f} points'.format(l.property.wins, l.property.losses, l.property.score))
 
     def compare(self):
         for a, b in itertools.combinations(self.list, 2):
@@ -108,7 +109,6 @@ def main(argv):
     with open(argv[0]) as f:
         r = csv.DictReader(f, fieldnames=csv_header_list_gl + csv_header_list_p + csv_header_auto, dialect='excel')
         try:
-            next(r)
             for row in r:
                 # print(row)
                 acc = Account(row)

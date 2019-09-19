@@ -192,23 +192,47 @@ class Property(BaseLOB):
                self.bg2_symbol.weight + \
                self.flood_premium.weight + \
                self.flood_dispersion.weight + \
-               self.bad_flood_terr.weight + self.average_crime.weight + self.poor_crime_terr.weight
+               self.bad_flood_terr.weight + \
+               self.average_crime.weight + \
+               self.poor_crime_terr.weight
 
     def play_business_line(self, account):
-        a = self.tiv_size.play_field(account.tiv_size.point)
-        b = self.estimated_premium.play_field(account.estimated_premium.point)
-        c = self.tiv_description.play_field(account.tiv_description.point)
-        d = self.yum.play_field(account.yum.point)
-        e = self.construction_grade.play_field(account.construction_grade.point)
-        f = self.poor_construction.play_field(account.poor_construction.point)
+        a1 = self.tiv_size.play_field(account.tiv_size.point)
+        a2 = self.estimated_premium.play_field(account.estimated_premium.point)
+        a3 = self.tiv_description.play_field(account.tiv_description.point)
+        a4 = self.yum.play_field(account.yum.point)
+        a5 = self.construction_grade.play_field(account.construction_grade.point)
+        a6 = self.poor_construction.play_field(account.poor_construction.point)
+        a7 = self.ppc_factor.play_field(account.ppc_factor.point)
+        a8 = self.poor_ppc.play_field(account.poor_ppc.point)
+        a9 = self.average_age.play_field(account.average_age.point)
+        a10 = self.hurricane_premium.play_field(account.hurricane_premium.point)
+        a11 = self.hurricane_dispersion.play_field(account.hurricane_dispersion.point)
+        a12 = self.bg2_symbol.play_field(account.bg2_symbol.point)
+        a13 = self.flood_premium.play_field(account.flood_premium.point)
+        a14 = self.flood_dispersion.play_field(account.flood_dispersion.point)
+        a15 = self.bad_flood_terr.play_field(account.bad_flood_terr.point)
+        a16 = self.average_crime.play_field(account.average_crime.point)
+        a17 = self.poor_crime_terr.play_field(account.poor_crime_terr.point)
 
-        scores = [a, b, c, d, e, f]
+        scores = [a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17]
         weights = [self.tiv_size.weight,
                    self.estimated_premium.weight,
                    self.tiv_description.weight,
                    self.yum.weight,
                    self.construction_grade.weight,
-                   self.poor_construction.weight]
+                   self.poor_construction.weight,
+                   self.ppc_factor.weight,
+                   self.poor_ppc.weight,
+                   self.average_age.weight,
+                   self.hurricane_premium.weight,
+                   self.hurricane_dispersion.weight,
+                   self.bg2_symbol.weight,
+                   self.flood_premium.weight,
+                   self.flood_dispersion.weight,
+                   self.bad_flood_terr.weight,
+                   self.average_crime.weight,
+                   self.poor_crime_terr.weight]
 
         # divide sum of product by weights sum
         prod = sum_product(scores, weights) / self.weight_sum
@@ -218,7 +242,7 @@ class Property(BaseLOB):
         self.print_results(scores, prod, list(map(lambda x: x * -1, scores)), prod * -1, weights)
 
     def print_results(self, s1, p1, s2, p2, weights):
-        print('{} vs. {}, '
+        print('PROP: {} vs. {}, '
               'with result: {} vs. {}, weights: {} with sum: {}'
               .format(s1, s2,
                       format(p1,

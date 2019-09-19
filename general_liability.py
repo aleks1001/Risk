@@ -98,7 +98,7 @@ class GeneralLiability(BaseLOB):
         self.print_results(scores, prod, list(map(lambda x: x * -1, scores)), prod * -1, weights)
 
     def print_results(self, s1, p1, s2, p2, weights):
-        print('{} vs. {}, '
+        print('GL: {} vs. {}, '
               'with result: {} vs. {}, weights: {} with sum: {}'
               .format(s1, s2,
                       format(p1,
