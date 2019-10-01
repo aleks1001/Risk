@@ -1,0 +1,12 @@
+#!/bin/sh
+
+INPUT_CSV_FILENAME="risk.csv"
+OUTPUT_CSV_FILENAME="risk_out.csv"
+
+GL_START=1
+GL_END=14
+
+P_START=15
+P_END=28
+
+python3 main.py -i $INPUT_CSV_FILENAME -o $OUTPUT_CSV_FILENAME --gl=$GL_START:$GL_END --p=$P_START:$P_END

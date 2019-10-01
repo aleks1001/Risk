@@ -1,5 +1,7 @@
 from general_liability import *
 from property import *
+from auto import *
+import re
 
 
 def is_def(n):
@@ -8,10 +10,19 @@ def is_def(n):
     return int(n)
 
 
+def parse_currency(s):
+    return int(re.sub('[^\d.]', '', s))
+
+
 class Account:
     def __init__(self, account):
         self.id = account['record']
-        self.gl = GeneralLiability(account['gl_indicated_premium_score'],
+        self.gl_weight_premium = parse_currency(account['gl_weight_premium'])
+        self.p_weight_premium = parse_currency(account['p_weight_premium'])
+        self.a_weight_premium = parse_currency(account['a_weight_premium'])
+        self.total_premium = self.gl_weight_premium + self.p_weight_premium + self.a_weight_premium
+        self.gl = GeneralLiability(self.gl_weight_premium,
+                                   account['gl_indicated_premium_score'],
                                    is_def(account['gl_indicated_premium_points']),
                                    account['gl_exposure_size_score'],
                                    is_def(account['gl_exposure_size_points']),
@@ -24,7 +35,8 @@ class Account:
                                    account['gl_hazard_class_score'],
                                    is_def(account['gl_hazard_class_points'])
                                    )
-        self.property = Property(account['p_tiv_size_score'],
+        self.property = Property(self.p_weight_premium,
+                                 account['p_tiv_size_score'],
                                  is_def(account['p_tiv_size_point']),
                                  account['p_estimated_premium_score'],
                                  is_def(account['p_estimated_premium_point']),
@@ -59,7 +71,21 @@ class Account:
                                  account['p_poor_crime_terr_score'],
                                  is_def(account['p_poor_crime_terr_point'])
                                  )
+        self.auto = Auto(self.a_weight_premium,
+                         account['a_indicated_single_vehicle_premium_score'],
+                         is_def(account['a_indicated_single_vehicle_premium_point']),
+                         account['a_indicated_total_premium_score'],
+                         is_def(account['a_indicated_total_premium_point']),
+                         account['a_NAICS_factor_score'],
+                         is_def(account['a_NAICS_factor_point']),
+                         account['a_primary_factor_score'],
+                         is_def(account['a_primary_factor_point']),
+                         account['a_crashes_score'],
+                         is_def(account['a_crashes_point']),
+                         )
 
     def play_against_other_account(self, account):
+        print('\nPlaying record {} vs. record {}'.format(self.id, account.id))
         self.gl.play_business_line(account.gl)
         self.property.play_business_line(account.property)
+        self.auto.play_business_line(account.auto)

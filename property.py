@@ -122,6 +122,7 @@ class PoorCrimeTerr(BaseField):
 
 class Property(BaseLOB):
     def __init__(self,
+                 weight_premium,
                  tiv_size_score,
                  tiv_size_point,
                  estimated_premium_score,
@@ -158,6 +159,7 @@ class Property(BaseLOB):
                  poor_crime_terr_point
                  ):
         super().__init__()
+        self.weight_premium = weight_premium
         self.tiv_size = TIVSize(tiv_size_score, tiv_size_point)
         self.estimated_premium = EstimatedPremium(estimated_premium_score, estimated_premium_point)
         self.tiv_description = TIVDescription(tiv_description_score, tiv_description_point)

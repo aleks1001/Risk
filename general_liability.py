@@ -45,6 +45,7 @@ class HazardClass(BaseField):
 
 class GeneralLiability(BaseLOB):
     def __init__(self,
+                 weight_premium,
                  indicated_premium_score,
                  indicated_premium_points,
                  exposure_size_score,
@@ -58,6 +59,7 @@ class GeneralLiability(BaseLOB):
                  hazard_class_score,
                  hazard_class_points):
         super().__init__()
+        self.weight_premium = weight_premium
         self.indicated_premium = IndicatedPremium(indicated_premium_score, indicated_premium_points)
         self.exposure_size = ExposureSize(exposure_size_score, exposure_size_points)
         self.yum = Yum(yum_score, yum_points)
