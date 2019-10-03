@@ -76,7 +76,7 @@ class GeneralLiability(BaseLOB):
                self.teiring_industry.weight + \
                self.hazard_class.weight
 
-    def play_business_line(self, account):
+    def play_business_line(self, account, premiums):
         a = self.indicated_premium.play_field(account.indicated_premium.point)
         b = self.exposure_size.play_field(account.exposure_size.point)
         c = self.yum.play_field(account.yum.point)
@@ -84,7 +84,7 @@ class GeneralLiability(BaseLOB):
         e = self.teiring_industry.play_field(account.teiring_industry.point)
         f = self.hazard_class.play_field(account.hazard_class.point)
 
-        scores = [a, b, c, d, e, f]
+        points = [a, b, c, d, e, f]
         weights = [self.indicated_premium.weight,
                    self.exposure_size.weight,
                    self.yum.weight,
@@ -93,11 +93,10 @@ class GeneralLiability(BaseLOB):
                    self.hazard_class.weight]
 
         # divide sum of product by weights sum
-        prod = sum_product(scores, weights) / self.weight_sum
-
-        self.process_score(prod)
-        account.process_score(prod * -1)
-        self.print_results(scores, prod, list(map(lambda x: x * -1, scores)), prod * -1, weights)
+        total_points = sum_product(points, weights) / self.weight_sum
+        self.process_score(total_points * (self.weight_premium/premiums))
+        account.process_score(total_points * (account.weight_premium/premiums) * -1)
+        self.print_results(points, total_points, list(map(lambda x: x * -1, points)), total_points * -1, weights)
 
     def print_results(self, s1, p1, s2, p2, weights):
         print('GL: {} vs. {}, '

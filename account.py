@@ -85,7 +85,11 @@ class Account:
                          )
 
     def play_against_other_account(self, account):
-        print('\nPlaying record {} vs. record {}'.format(self.id, account.id))
-        self.gl.play_business_line(account.gl)
-        self.property.play_business_line(account.property)
-        self.auto.play_business_line(account.auto)
+        combined_weight_premiums = self.total_premium + account.total_premium
+        print('\nPlaying record {} vs. record {} with combined premiums {}'.format(self.id, account.id,
+                                                                                   combined_weight_premiums))
+        gl_weighted_total_points = self.gl.play_business_line(account.gl, combined_weight_premiums)
+        property_weighted_total_points = self.property.play_business_line(account.property, combined_weight_premiums)
+        auto_weighted_total_points = self.auto.play_business_line(account.auto, combined_weight_premiums)
+        print('\n {}'.format(sum(self.gl.results + self.property.results + self.auto.results)))
+        print('\n {} {} {}'.format(account.gl.results, account.property.results, account.auto.results))

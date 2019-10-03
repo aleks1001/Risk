@@ -67,14 +67,14 @@ class Auto(BaseLOB):
                self.primary_factor.weight + \
                self.crashes.weight
 
-    def play_business_line(self, account):
+    def play_business_line(self, account, premiums):
         a = self.indicated_single_vehicle_premium.play_field(account.indicated_single_vehicle_premium.point)
         b = self.indicated_total_premium.play_field(account.indicated_total_premium.point)
         c = self.NAICS_factor.play_field(account.NAICS_factor.point)
         d = self.primary_factor.play_field(account.primary_factor.point)
         e = self.crashes.play_field(account.crashes.point)
 
-        scores = [a, b, c, d, e]
+        points = [a, b, c, d, e]
         weights = [self.indicated_single_vehicle_premium.weight,
                    self.indicated_total_premium.weight,
                    self.NAICS_factor.weight,
@@ -82,11 +82,10 @@ class Auto(BaseLOB):
                    self.crashes.weight]
 
         # divide sum of product by weights sum
-        prod = sum_product(scores, weights) / self.weight_sum
-
-        self.process_score(prod)
-        account.process_score(prod * -1)
-        self.print_results(scores, prod, list(map(lambda x: x * -1, scores)), prod * -1, weights)
+        total_points = sum_product(points, weights) / self.weight_sum
+        self.process_score(total_points * (self.weight_premium/premiums))
+        account.process_score(total_points * (account.weight_premium/premiums) * -1)
+        self.print_results(points, total_points, list(map(lambda x: x * -1, points)), total_points * -1, weights)
 
     def print_results(self, s1, p1, s2, p2, weights):
         print('AUTO: {} vs. {}, '

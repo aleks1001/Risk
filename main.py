@@ -104,7 +104,7 @@ class Accounts:
                 sys.exit('file {}, line {}: {}'.format('risk.csv', r.line_num, e))
 
     def print(self):
-        for l in self.list:
+        for l in self.list[0:2]:
             print('Record: ', l.id)
             print('\tGL:\t\t{:>2d} wins, {:>2d} loses, {:>5.2f} points'.format(l.gl.wins, l.gl.losses, l.gl.score))
             print('\tPROP:\t{:>2d} wins, {:>2d} loses, {:>5.2f} points'.format(l.property.wins, l.property.losses,
@@ -113,7 +113,7 @@ class Accounts:
                                                                                l.auto.score))
 
     def play(self):
-        for a, b in itertools.combinations(self.list, 2):
+        for a, b in itertools.combinations(self.list[0:2], 2):
             a.play_against_other_account(b)
 
 
@@ -121,7 +121,7 @@ def main(argv):
     accounts = Accounts(argv)
     accounts.parse_csv()
     accounts.play()
-    # accounts.print()
+    accounts.print()
 
 
 if __name__ == '__main__':

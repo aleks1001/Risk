@@ -198,7 +198,7 @@ class Property(BaseLOB):
                self.average_crime.weight + \
                self.poor_crime_terr.weight
 
-    def play_business_line(self, account):
+    def play_business_line(self, account, premiums):
         a1 = self.tiv_size.play_field(account.tiv_size.point)
         a2 = self.estimated_premium.play_field(account.estimated_premium.point)
         a3 = self.tiv_description.play_field(account.tiv_description.point)
@@ -217,7 +217,7 @@ class Property(BaseLOB):
         a16 = self.average_crime.play_field(account.average_crime.point)
         a17 = self.poor_crime_terr.play_field(account.poor_crime_terr.point)
 
-        scores = [a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17]
+        points = [a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17]
         weights = [self.tiv_size.weight,
                    self.estimated_premium.weight,
                    self.tiv_description.weight,
@@ -237,11 +237,10 @@ class Property(BaseLOB):
                    self.poor_crime_terr.weight]
 
         # divide sum of product by weights sum
-        prod = sum_product(scores, weights) / self.weight_sum
-
-        self.process_score(prod)
-        account.process_score(prod * -1)
-        self.print_results(scores, prod, list(map(lambda x: x * -1, scores)), prod * -1, weights)
+        total_points = sum_product(points, weights) / self.weight_sum
+        self.process_score(total_points * (self.weight_premium/premiums))
+        account.process_score(total_points * (account.weight_premium/premiums) * -1)
+        self.print_results(points, total_points, list(map(lambda x: x * -1, points)), total_points * -1, weights)
 
     def print_results(self, s1, p1, s2, p2, weights):
         print('PROP: {} vs. {}, '
