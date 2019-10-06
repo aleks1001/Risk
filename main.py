@@ -103,17 +103,32 @@ class Accounts:
             except csv.Error as e:
                 sys.exit('file {}, line {}: {}'.format('risk.csv', r.line_num, e))
 
+    def write_csv(self):
+        with open('results.csv', 'w', newline='') as file:
+            fields = ['id', 'gl_scores', 'gl_points', 'gl_win_loss']
+            w = csv.DictWriter(file, fieldnames=fields, dialect='excel')
+            w.writeheader()
+            for a in self.list:
+                w.writerow({'id': a.id, 'gl_scores': 0, 'gl_points': a.gl.point, 'gl_win_loss': a.gl.result})
+
     def print(self):
-        for l in self.list[0:2]:
-            print('Record: ', l.id)
-            print('\tGL:\t\t{:>2d} wins, {:>2d} loses, {:>5.2f} points'.format(l.gl.wins, l.gl.losses, l.gl.score))
-            print('\tPROP:\t{:>2d} wins, {:>2d} loses, {:>5.2f} points'.format(l.property.wins, l.property.losses,
-                                                                               l.property.score))
-            print('\tAUTO:\t{:>2d} wins, {:>2d} loses, {:>5.2f} points'.format(l.auto.wins, l.auto.losses,
-                                                                               l.auto.score))
+        print('\n{} \t{} \t{} \t{} \t{} \t{} \t{} \t{} \t{} \t{}'.format('Record', 'GL scores', 'GL points',
+                                                                         'GL win/loss', 'P scores',
+                                                                         'P points', 'P win/loss', 'A scores',
+                                                                         'A points', 'A win/loss'))
+        for a in self.list[0:10]:
+            print(
+                '{:>3s} \t{:>6d} \t{:>10.2f} \t{:>11.2f} \t{:>8d} \t{:>10.2f} \t{:>10.2f} \t{:>8d} \t{:>10.2f} \t{:>11.2f}'.format(
+                    a.id, 0,
+                    a.gl.point,
+                    a.gl.result,
+                    0,
+                    a.property.point,
+                    a.property.result,
+                    0, a.auto.point, a.auto.result))
 
     def play(self):
-        for a, b in itertools.combinations(self.list[0:2], 2):
+        for a, b in itertools.combinations(self.list[0:10], 2):
             a.play_against_other_account(b)
 
 
@@ -122,6 +137,7 @@ def main(argv):
     accounts.parse_csv()
     accounts.play()
     accounts.print()
+    accounts.write_csv()
 
 
 if __name__ == '__main__':

@@ -17,6 +17,7 @@ def parse_currency(s):
 class Account:
     def __init__(self, account):
         self.id = account['record']
+        self.addition_info = []
         self.gl_weight_premium = parse_currency(account['gl_weight_premium'])
         self.p_weight_premium = parse_currency(account['p_weight_premium'])
         self.a_weight_premium = parse_currency(account['a_weight_premium'])
@@ -84,12 +85,21 @@ class Account:
                          is_def(account['a_crashes_point']),
                          )
 
+    def process_total(self, premium):
+        print(self.gl.points)
+
     def play_against_other_account(self, account):
         combined_weight_premiums = self.total_premium + account.total_premium
+        self.addition_info.append({'account_against': account.id, 'combined_premium': combined_weight_premiums})
+        account.addition_info.append({'account_against': self.id, 'combined_premium': combined_weight_premiums})
+        # *(self.weight_premium / premiums)
         print('\nPlaying record {} vs. record {} with combined premiums {}'.format(self.id, account.id,
                                                                                    combined_weight_premiums))
-        gl_weighted_total_points = self.gl.play_business_line(account.gl, combined_weight_premiums)
-        property_weighted_total_points = self.property.play_business_line(account.property, combined_weight_premiums)
-        auto_weighted_total_points = self.auto.play_business_line(account.auto, combined_weight_premiums)
-        print('\n {}'.format(sum(self.gl.results + self.property.results + self.auto.results)))
-        print('\n {} {} {}'.format(account.gl.results, account.property.results, account.auto.results))
+        self.gl.play_business_line(account.gl)
+        self.property.play_business_line(account.property)
+        self.auto.play_business_line(account.auto)
+
+        # self.process_total(combined_weight_premiums)
+        # account.process_total(combined_weight_premiums)
+        # print('\n {}'.format(format(sum(self.points), '.2f')))
+        # print('\n {}'.format(format(sum(account.points), '.2f')))

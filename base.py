@@ -35,35 +35,45 @@ class BaseField:
 
     def play_field(self, point):
         if self.point == 6 or point == 6:
-            return look_up[self.point-point]
+            return look_up[self.point - point]
         return self.point - point
 
 
 class BaseLOB:
     def __init__(self):
+        self.points = []
+        self.scores = []
         self.results = []
-        self.wins = 0
-        self.losses = 0
-        self.ties = 0
 
-    def add_result(self, score):
-        self.results.append(score)
+    def add_points(self, point):
+        self.points.append(point)
 
-    def add_win_loss(self, score):
-        if score > 0:
-            self.wins += 1
-        elif score < 0:
-            self.losses += 1
+    def add_results(self, result):
+        self.results.append(result)
+
+    def add_scores(self, score):
+        self.scores.append(score)
+
+    def process_point(self, point):
+        self.add_points(point)
+        if point > 0:
+            self.add_results(1)
+        elif point < 0:
+            self.add_results(0)
         else:
-            self.ties += 0.5
-
-    def process_score(self, score):
-        self.add_win_loss(score)
-        self.add_result(score)
+            self.add_results(0.5)
 
     @property
     def score(self):
-        return self.wins + self.ties
+        return sum(self.scores)
+
+    @property
+    def point(self):
+        return sum(self.points)
+
+    @property
+    def result(self):
+        return sum(self.results)
 
 
 def sum_product(*lists):
