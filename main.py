@@ -90,7 +90,7 @@ class Accounts:
         print('Input file is ', self.input_file)
         print('Output file is ', self.output_file)
 
-    def parse_csv(self):
+    def read_csv(self):
         with open(self.input_file) as file:
             r = csv.DictReader(file,
                                fieldnames=['record'] + csv_header_list_gl + csv_header_list_p + csv_header_auto,
@@ -105,18 +105,30 @@ class Accounts:
 
     def write_csv(self):
         with open('results.csv', 'w', newline='') as file:
-            fields = ['id', 'gl_scores', 'gl_points', 'gl_win_loss']
+            fields = ['id', 'gl_scores', 'gl_points', 'gl_win_loss',
+                      'p_scores', 'p_points', 'p_win_loss',
+                      'a_scores', 'a_points', 'a_win_loss']
             w = csv.DictWriter(file, fieldnames=fields, dialect='excel')
             w.writeheader()
             for a in self.list:
-                w.writerow({'id': a.id, 'gl_scores': 0, 'gl_points': a.gl.point, 'gl_win_loss': a.gl.result})
+                w.writerow({'id': a.id,
+                            'gl_scores': a.gl.score,
+                            'gl_points': format(a.gl.point, '.2f'),
+                            'gl_win_loss': format(a.gl.result, '.2f'),
+                            'p_scores': a.property.score,
+                            'p_points': format(a.property.point, '.2f'),
+                            'p_win_loss': format(a.property.result, '.2f'),
+                            'a_scores': a.auto.score,
+                            'a_points': format(a.auto.point, '.2f'),
+                            'a_win_loss': format(a.auto.result, '.2f')
+                            })
 
     def print(self):
         print('\n{} \t{} \t{} \t{} \t{} \t{} \t{} \t{} \t{} \t{}'.format('Record', 'GL scores', 'GL points',
                                                                          'GL win/loss', 'P scores',
                                                                          'P points', 'P win/loss', 'A scores',
                                                                          'A points', 'A win/loss'))
-        for a in self.list[0:10]:
+        for a in self.list[0:100]:
             print(
                 '{:>3s} \t{:>6d} \t{:>10.2f} \t{:>11.2f} \t{:>8d} \t{:>10.2f} \t{:>10.2f} \t{:>8d} \t{:>10.2f} \t{:>11.2f}'.format(
                     a.id, 0,
@@ -128,16 +140,21 @@ class Accounts:
                     0, a.auto.point, a.auto.result))
 
     def play(self):
-        for a, b in itertools.combinations(self.list[0:10], 2):
+        for a, b in itertools.combinations(self.list[0:100], 2):
             a.play_against_other_account(b)
+
+    def show_results(self, record_id):
+        acc = self.list[record_id]
+        print('\n{}'.format(acc.addition_info.account_against))
 
 
 def main(argv):
     accounts = Accounts(argv)
-    accounts.parse_csv()
+    accounts.read_csv()
     accounts.play()
     accounts.print()
     accounts.write_csv()
+    # accounts.show_results(10)
 
 
 if __name__ == '__main__':
