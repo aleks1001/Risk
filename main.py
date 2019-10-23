@@ -70,25 +70,25 @@ csv_header_auto = [
 
 class Accounts:
     list = []
+    account_to_run = 0
 
     def __init__(self, argv):
         super().__init__()
         try:
-            opts, args = getopt.getopt(argv, "i:o:", ["ifile=", "ofile="])
+            opts, args = getopt.getopt(argv, "i:o:n:", ['ifile=', 'ofile='])
         except getopt.GetoptError:
-            print('risk.py -i <inputfile> -o <outputfile>')
+            print('main.py -n <accounts_to_run> -i <inputfile> -o <outputfile>')
             sys.exit(2)
         for opt, arg in opts:
             if opt == '-h':
-                print('risk.py -i <inputfile> -o <outputfile>')
+                print('main.py -n <accounts_to_run> -i <inputfile> -o <outputfile>')
                 sys.exit()
             elif opt in ("-i", "--ifile"):
                 self.input_file = arg
             elif opt in ("-o", "--ofile"):
                 self.output_file = arg
-
-        print('Input file is ', self.input_file)
-        print('Output file is ', self.output_file)
+            elif opt == '-n':
+                self.account_to_run = int(arg)
 
     def read_csv(self):
         with open(self.input_file) as file:
@@ -104,14 +104,18 @@ class Accounts:
                 sys.exit('file {}, line {}: {}'.format('risk.csv', r.line_num, e))
 
     def write_csv(self):
-        with open('results.csv', 'w', newline='') as file:
-            fields = ['id', 'gl_scores', 'gl_points', 'gl_win_loss',
+        with open(self.output_file, 'w', newline='') as file:
+            fields = ['id', 'total_scores', 'total_points', 'total_win_lose',
+                      'gl_scores', 'gl_points', 'gl_win_loss',
                       'p_scores', 'p_points', 'p_win_loss',
                       'a_scores', 'a_points', 'a_win_loss']
             w = csv.DictWriter(file, fieldnames=fields, dialect='excel')
             w.writeheader()
-            for a in self.list:
+            for a in self.list[0:self.account_to_run]:
                 w.writerow({'id': a.id,
+                            'total_scores': a.score_total,
+                            'total_points': format(a.point_total, '.2f'),
+                            'total_win_lose': a.result_total,
                             'gl_scores': a.gl.score,
                             'gl_points': format(a.gl.point, '.2f'),
                             'gl_win_loss': format(a.gl.result, '.2f'),
@@ -124,23 +128,33 @@ class Accounts:
                             })
 
     def print(self):
-        print('\n{} \t{} \t{} \t{} \t{} \t{} \t{} \t{} \t{} \t{}'.format('Record', 'GL scores', 'GL points',
-                                                                         'GL win/loss', 'P scores',
-                                                                         'P points', 'P win/loss', 'A scores',
-                                                                         'A points', 'A win/loss'))
-        for a in self.list[0:100]:
+        print('\n{} \t{} \t{} \t{} \t{} \t{} \t{} \t{} \t{} \t{} \t{} \t{} \t{}'.format('Record', 'Total scores',
+                                                                                        'Total points',
+                                                                                        'Total win/lose', 'GL scores',
+                                                                                        'GL points',
+                                                                                        'GL win/loss', 'P scores',
+                                                                                        'P points', 'P win/loss',
+                                                                                        'A scores',
+                                                                                        'A points', 'A win/loss'))
+        for a in self.list[0:self.account_to_run]:
             print(
-                '{:>3s} \t{:>6d} \t{:>10.2f} \t{:>11.2f} \t{:>8d} \t{:>10.2f} \t{:>10.2f} \t{:>8d} \t{:>10.2f} \t{:>11.2f}'.format(
-                    a.id, 0,
+                '{:>3s} \t{:>6d} \t{:>16.2f} \t{:>11.1f} \t{:>10d} \t{:>12.2f} \t{:>9.1f} \t{:>8d} \t{:>10.2f} \t{:>11.1f} \t{:>5d} \t{:>11.2f} \t{:>8.1f}'.format(
+                    a.id,
+                    0,
+                    a.point_total,
+                    a.result_total,
+                    a.gl.score,
                     a.gl.point,
                     a.gl.result,
-                    0,
+                    a.property.score,
                     a.property.point,
                     a.property.result,
-                    0, a.auto.point, a.auto.result))
+                    a.auto.score,
+                    a.auto.point,
+                    a.auto.result))
 
     def play(self):
-        for a, b in itertools.combinations(self.list[0:100], 2):
+        for a, b in itertools.combinations(self.list[0:self.account_to_run], 2):
             a.play_against_other_account(b)
 
     def show_results(self, record_id):

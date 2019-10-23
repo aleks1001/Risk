@@ -82,10 +82,10 @@ class Auto(BaseLOB):
                    self.crashes.weight]
 
         # divide sum of product by weights sum
-        total_points = sum_product(points, weights) / self.weight_sum
-        self.process_point(total_points)
-        account.process_point(total_points * -1)
-        # self.print_results(points, total_points, list(map(lambda x: x * -1, points)), total_points * -1, weights)
+        p = sum_product(points, weights) / self.weight_sum
+        self.process_point(p)
+        account.process_point(p * -1)
+        return p
 
     def print_results(self, s1, p1, s2, p2, weights):
         print('AUTO: {} vs. {}, '

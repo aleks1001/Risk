@@ -18,6 +18,9 @@ class Account:
     def __init__(self, account):
         self.id = account['record']
         self.addition_info = []
+        self.scores_total = []
+        self.points_total = []
+        self.results_total = []
         self.gl_weight_premium = parse_currency(account['gl_weight_premium'])
         self.p_weight_premium = parse_currency(account['p_weight_premium'])
         self.a_weight_premium = parse_currency(account['a_weight_premium'])
@@ -85,21 +88,48 @@ class Account:
                          is_def(account['a_crashes_point']),
                          )
 
-    def process_total(self, premium):
-        print(self.gl.points)
+    @property
+    def score_total(self):
+        return sum(self.scores_total)
+
+    @property
+    def point_total(self):
+        return sum(self.points_total)
+
+    @property
+    def result_total(self):
+        return sum(self.results_total)
+
+    def get_winner(self, p1, p2):
+        if p1 > p2:
+            self.results_total.append(1)
+        elif p1 < p2:
+            self.results_total.append(0)
+        else:
+            self.results_total.append(0.5)
+
+    def calculate_total(self, combined_premium, gl_p, p_p, auto_p):
+        weights = [
+            self.gl.weight_premium/combined_premium,
+            self.property.weight_premium/combined_premium,
+            self.auto.weight_premium/combined_premium
+        ]
+        sum_totals = sum_product(weights, [gl_p, p_p, auto_p])
+        self.points_total.append(sum_totals)
+        return sum_totals
 
     def play_against_other_account(self, account):
         combined_weight_premiums = self.total_premium + account.total_premium
         self.addition_info.append({'account_against': account.id, 'combined_premium': combined_weight_premiums})
         account.addition_info.append({'account_against': self.id, 'combined_premium': combined_weight_premiums})
-        # *(self.weight_premium / premiums)
-        print('\nPlaying record {} vs. record {} with combined premiums {}'.format(self.id, account.id,
-                                                                                   combined_weight_premiums))
-        self.gl.play_business_line(account.gl)
-        self.property.play_business_line(account.property)
-        self.auto.play_business_line(account.auto)
+        # print('\nPlaying record {} vs. record {} with combined premiums {}'.format(self.id, account.id,
+        #                                                                            combined_weight_premiums))
+        gl_point = self.gl.play_business_line(account.gl)
+        p_point = self.property.play_business_line(account.property)
+        auto_point = self.auto.play_business_line(account.auto)
 
-        # self.process_total(combined_weight_premiums)
-        # account.process_total(combined_weight_premiums)
-        # print('\n {}'.format(format(sum(self.points), '.2f')))
-        # print('\n {}'.format(format(sum(account.points), '.2f')))
+        p1 = self.calculate_total(combined_weight_premiums, gl_point, p_point, auto_point)
+        p2 = account.calculate_total(combined_weight_premiums, gl_point * -1, p_point * -1, auto_point * -1)
+
+        self.get_winner(p1, p2)
+        account.get_winner(p2, p1)
