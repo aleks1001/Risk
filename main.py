@@ -70,7 +70,7 @@ csv_header_auto = [
 
 class Accounts:
     list = []
-    account_to_run = 0
+    account_to_run = 100
 
     def __init__(self, argv):
         super().__init__()
