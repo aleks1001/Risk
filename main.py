@@ -2,6 +2,7 @@ import csv
 import sys
 import getopt
 import itertools
+from operator import attrgetter
 from account import *
 
 csv_header_list_gl = ['gl_weight_premium',
@@ -68,6 +69,12 @@ csv_header_auto = [
     'a_crashes_point']
 
 
+def sort(xs, specs):
+    for key, reverse in reversed(specs):
+        xs.sort(key=attrgetter(key), reverse=reverse)
+    return xs
+
+
 class Accounts:
     list = []
     account_to_run = 100
@@ -111,7 +118,7 @@ class Accounts:
                       'a_scores', 'a_points', 'a_win_loss']
             w = csv.DictWriter(file, fieldnames=fields, dialect='excel')
             w.writeheader()
-            for a in self.list[0:self.account_to_run]:
+            for a in sort(self.list[0:self.account_to_run], (('result_total', True), ('point_total', True))):
                 w.writerow({'id': a.id,
                             'total_scores': a.score_total,
                             'total_points': format(a.point_total, '.2f'),
@@ -136,7 +143,7 @@ class Accounts:
                                                                                         'P points', 'P win/loss',
                                                                                         'A scores',
                                                                                         'A points', 'A win/loss'))
-        for a in self.list[0:self.account_to_run]:
+        for a in sort(self.list[0:self.account_to_run], (('result_total', True), ('point_total', True))):
             print(
                 '{:>3s} \t{:>6d} \t{:>16.2f} \t{:>11.1f} \t{:>10d} \t{:>12.2f} \t{:>9.1f} \t{:>8d} \t{:>10.2f} \t{:>11.1f} \t{:>5d} \t{:>11.2f} \t{:>8.1f}'.format(
                     a.id,

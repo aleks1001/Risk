@@ -97,14 +97,3 @@ class GeneralLiability(BaseLOB):
         self.process_point(p)
         account.process_point(p * -1)
         return p
-
-    def print_results(self, s1, p1, s2, p2, weights):
-        print('GL: {} vs. {}, '
-              'with result: {} vs. {}, weights: {} with sum: {}'
-              .format(s1, s2,
-                      format(p1,
-                             '.2f'),
-                      format(p2,
-                             '.2f'),
-                      weights,
-                      format(self.weight_sum, '.2f')))
